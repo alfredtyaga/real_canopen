@@ -54,8 +54,9 @@ OBJECTS = 	$(DRV)/can_AVR.o\
 		$(SRC)/sdo.o\
 		$(SRC)/states.o\
 		$(SRC)/sync.o\
-		real-objdict.o\
+		real_objdict.o\
 		uart.o\
+		pwm.o\
 		main.o
 
 ## Build

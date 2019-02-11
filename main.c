@@ -34,7 +34,7 @@ Short description:
 #include "hardware.h"
 #include "canfestival.h"
 #include "can_AVR.h"
-#include "real-objdict.h"
+#include "real_objdict.h"
 #include "uart.h"
 #include <stdio.h>
 #include <util/delay.h>
@@ -46,6 +46,20 @@ unsigned char inputs;
 unsigned char nodeID;
 unsigned char digital_input[1] = {0};
 unsigned char digital_output[1] = {0};
+
+UNS16 pwm_on_time[32] = {
+    0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0,
+};
+
+UNS16 pwm_off_time[32] = {
+    0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0,
+};
 
 static Message m = Message_Initializer;         // contain a CAN message
 
@@ -59,6 +73,7 @@ void sys_init();
 
 unsigned char digital_input_handler(CO_Data* d, unsigned char *newInput, unsigned char size)
 {
+  /*
   unsigned char loops, i, input, transmission = 0;
 
   loops = (sizeof(Read_Inputs_8_Bit) <= size) ? sizeof(Read_Inputs_8_Bit) : size;
@@ -83,11 +98,11 @@ unsigned char digital_input_handler(CO_Data* d, unsigned char *newInput, unsigne
 
   if (transmission)
   {
-    /* force emission of PDO by artificially changing last emitted*/
+    // force emission of PDO by artificially changing last emitted
     d->PDO_status[0].last_message.cob_id = 0;
     sendPDOevent(d);
   }
-
+  */
   return 1;
 }
 
@@ -120,6 +135,40 @@ unsigned char analog_input_handler(CO_Data* d, unsigned int *newInput, unsigned 
 unsigned char analog_output_handler(CO_Data* d, unsigned int *newOutput, unsigned char size)
 {
   return 0;
+}
+
+unsigned char pwm_output_handler(CO_Data* d, UNS16 *on_time, UNS16 *off_time, unsigned char count)
+{
+  unsigned char i, error, type;
+  UNS32 varsize = 1;
+  unsigned char outputs_disabled;
+  UNS16 new_on, new_off;
+
+  // Get the error status
+  getODentry(d, 0x1001, 0x0, &error, &varsize, &type, RO);
+
+  outputs_disabled = (getState(d) == Stopped || !error);
+
+  for (i=0; i < count; i++)
+  {
+    if (outputs_disabled)
+    {
+        new_on = 0;
+        new_off = 0;
+    } else {
+        new_on = 0;
+        new_off = (Write_Outputs_16_Bit[i] & 0x0FFF);
+    }
+
+    if ((new_on != *on_time) || (new_off != *off_time)) {
+        *on_time = new_on;
+        *off_time = new_off;
+    }
+
+    on_time++;
+    off_time++;
+  }
+  return 1;
 }
 
 unsigned char read_inputs()

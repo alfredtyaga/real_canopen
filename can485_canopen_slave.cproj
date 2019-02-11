@@ -234,13 +234,13 @@
       <SubType>compile</SubType>
       <Link>hardware.h</Link>
     </Compile>
-    <Compile Include="real-objdict.c">
+    <Compile Include="real_objdict.c">
       <SubType>compile</SubType>
-      <Link>real-objdict.c</Link>
+      <Link>real_objdict.c</Link>
     </Compile>
-    <Compile Include="real-objdict.h">
+    <Compile Include="real_objdict.h">
       <SubType>compile</SubType>
-      <Link>real-objdict.h</Link>
+      <Link>real_objdict.h</Link>
     </Compile>
     <Compile Include="main.c">
       <SubType>compile</SubType>
