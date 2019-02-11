@@ -4,11 +4,11 @@ FileVersion=1
 FileRevision=1
 EDSVersion=4.0
 Description=Slave AVR Test
-CreationTime=03:41PM
-CreationDate=02-05-2019
+CreationTime=12:56AM
+CreationDate=02-11-2019
 CreatedBy=CANFestival
-ModificationTime=03:41PM
-ModificationDate=02-05-2019
+ModificationTime=12:56AM
+ModificationDate=02-11-2019
 ModifiedBy=CANFestival
 
 [DeviceInfo]
@@ -115,7 +115,7 @@ DefaultValue=0
 PDOMapping=0
 
 [OptionalObjects]
-SupportedObjects=26
+SupportedObjects=21
 1=0x1003
 2=0x1005
 3=0x1008
@@ -132,16 +132,11 @@ SupportedObjects=26
 14=0x1800
 15=0x1A00
 16=0x6000
-17=0x6002
-18=0x6003
-19=0x6005
-20=0x6006
-21=0x6007
-22=0x6008
-23=0x6200
-24=0x6202
-25=0x6206
-26=0x6207
+17=0x6200
+18=0x6202
+19=0x6206
+20=0x6207
+21=0x6300
 
 [1003]
 ParameterName=Pre-defined Error Field
@@ -177,7 +172,7 @@ ParameterName=Manufacturer Device Name
 ObjectType=0x7
 DataType=0x0009
 AccessType=ro
-DefaultValue=
+DefaultValue=REAL
 PDOMapping=0
 
 [1009]
@@ -185,7 +180,7 @@ ParameterName=Manufacturer Hardware Version
 ObjectType=0x7
 DataType=0x0009
 AccessType=ro
-DefaultValue=
+DefaultValue=0.0.1
 PDOMapping=0
 
 [100A]
@@ -193,7 +188,7 @@ ParameterName=Manufacturer Software Version
 ObjectType=0x7
 DataType=0x0009
 AccessType=ro
-DefaultValue=
+DefaultValue=0.0.1
 PDOMapping=0
 
 [1010]
@@ -505,119 +500,6 @@ AccessType=ro
 DefaultValue=0
 PDOMapping=1
 
-[6002]
-ParameterName=Polarity Input 8 Bit
-ObjectType=0x8
-SubNumber=2
-
-[6002sub0]
-ParameterName=Number of Input 8 bit
-ObjectType=0x7
-DataType=0x0005
-AccessType=ro
-DefaultValue=1
-PDOMapping=0
-
-[6002sub1]
-ParameterName=Polarity Input 0x1 to 0x8
-ObjectType=0x7
-DataType=0x0005
-AccessType=rw
-DefaultValue=0
-PDOMapping=1
-
-[6003]
-ParameterName=Filter Constant Input 8 Bit
-ObjectType=0x8
-SubNumber=2
-
-[6003sub0]
-ParameterName=Number of Input 8 bit
-ObjectType=0x7
-DataType=0x0005
-AccessType=ro
-DefaultValue=1
-PDOMapping=0
-
-[6003sub1]
-ParameterName=Filter Constant Input 0x1 to 0x8
-ObjectType=0x7
-DataType=0x0005
-AccessType=rw
-DefaultValue=0
-PDOMapping=1
-
-[6005]
-ParameterName=Global Interrupt Enable Digital
-ObjectType=0x7
-DataType=0x0001
-AccessType=rw
-DefaultValue=1
-PDOMapping=0
-
-[6006]
-ParameterName=Interrupt Mask Any Change 8 Bit
-ObjectType=0x8
-SubNumber=2
-
-[6006sub0]
-ParameterName=Number of Input 8 bit
-ObjectType=0x7
-DataType=0x0005
-AccessType=ro
-DefaultValue=1
-PDOMapping=0
-
-[6006sub1]
-ParameterName=Interrupt Any Change 0x1 to 0x8
-ObjectType=0x7
-DataType=0x0005
-AccessType=rw
-DefaultValue=255
-PDOMapping=1
-
-[6007]
-ParameterName=Interrupt Mask Low to High 8 Bit
-ObjectType=0x8
-SubNumber=2
-
-[6007sub0]
-ParameterName=Number of Input 8 bit
-ObjectType=0x7
-DataType=0x0005
-AccessType=ro
-DefaultValue=1
-PDOMapping=0
-
-[6007sub1]
-ParameterName=Interrupt Low to High 0x1 to 0x8
-ObjectType=0x7
-DataType=0x0005
-AccessType=rw
-DefaultValue=0
-PDOMapping=1
-
-[6008]
-ParameterName=Interrupt Mask High to Low 8 Bit
-ObjectType=0x8
-SubNumber=2
-
-[6008sub0]
-ParameterName=Number of Input 8 bit
-ObjectType=0x7
-DataType=0x0005
-AccessType=ro
-DefaultValue=1
-PDOMapping=0
-
-[6008sub1]
-ParameterName=Interrupt High to Low 0x1 to 0x8
-ObjectType=0x7
-DataType=0x0005
-AccessType=rw
-DefaultValue=0
-PDOMapping=1
-
 [6200]
 ParameterName=Write Outputs 8 Bit
 ObjectType=0x8
@@ -698,6 +580,275 @@ PDOMapping=0
 ParameterName=Error Value Outputs 0x1 to 0x8
 ObjectType=0x7
 DataType=0x0005
+AccessType=rw
+DefaultValue=0
+PDOMapping=1
+
+[6300]
+ParameterName=Write Outputs 16 Bit
+ObjectType=0x8
+SubNumber=33
+
+[6300sub0]
+ParameterName=Number of Output 16 Bit
+ObjectType=0x7
+DataType=0x0005
+AccessType=ro
+DefaultValue=32
+PDOMapping=0
+
+[6300sub1]
+ParameterName=Write Outputs 0x1 to 0x10
+ObjectType=0x7
+DataType=0x0006
+AccessType=rw
+DefaultValue=0
+PDOMapping=1
+
+[6300sub2]
+ParameterName=Write Outputs 0x11 to 0x20
+ObjectType=0x7
+DataType=0x0006
+AccessType=rw
+DefaultValue=0
+PDOMapping=1
+
+[6300sub3]
+ParameterName=Write Outputs 0x21 to 0x30
+ObjectType=0x7
+DataType=0x0006
+AccessType=rw
+DefaultValue=0
+PDOMapping=1
+
+[6300sub4]
+ParameterName=Write Outputs 0x31 to 0x40
+ObjectType=0x7
+DataType=0x0006
+AccessType=rw
+DefaultValue=0
+PDOMapping=1
+
+[6300sub5]
+ParameterName=Write Outputs 0x41 to 0x50
+ObjectType=0x7
+DataType=0x0006
+AccessType=rw
+DefaultValue=0
+PDOMapping=1
+
+[6300sub6]
+ParameterName=Write Outputs 0x51 to 0x60
+ObjectType=0x7
+DataType=0x0006
+AccessType=rw
+DefaultValue=0
+PDOMapping=1
+
+[6300sub7]
+ParameterName=Write Outputs 0x61 to 0x70
+ObjectType=0x7
+DataType=0x0006
+AccessType=rw
+DefaultValue=0
+PDOMapping=1
+
+[6300sub8]
+ParameterName=Write Outputs 0x71 to 0x80
+ObjectType=0x7
+DataType=0x0006
+AccessType=rw
+DefaultValue=0
+PDOMapping=1
+
+[6300sub9]
+ParameterName=Write Outputs 0x81 to 0x90
+ObjectType=0x7
+DataType=0x0006
+AccessType=rw
+DefaultValue=0
+PDOMapping=1
+
+[6300subA]
+ParameterName=Write Outputs 0x91 to 0xA0
+ObjectType=0x7
+DataType=0x0006
+AccessType=rw
+DefaultValue=0
+PDOMapping=1
+
+[6300subB]
+ParameterName=Write Outputs 0xA1 to 0xB0
+ObjectType=0x7
+DataType=0x0006
+AccessType=rw
+DefaultValue=0
+PDOMapping=1
+
+[6300subC]
+ParameterName=Write Outputs 0xB1 to 0xC0
+ObjectType=0x7
+DataType=0x0006
+AccessType=rw
+DefaultValue=0
+PDOMapping=1
+
+[6300subD]
+ParameterName=Write Outputs 0xC1 to 0xD0
+ObjectType=0x7
+DataType=0x0006
+AccessType=rw
+DefaultValue=0
+PDOMapping=1
+
+[6300subE]
+ParameterName=Write Outputs 0xD1 to 0xE0
+ObjectType=0x7
+DataType=0x0006
+AccessType=rw
+DefaultValue=0
+PDOMapping=1
+
+[6300subF]
+ParameterName=Write Outputs 0xE1 to 0xF0
+ObjectType=0x7
+DataType=0x0006
+AccessType=rw
+DefaultValue=0
+PDOMapping=1
+
+[6300sub10]
+ParameterName=Write Outputs 0xF1 to 0x100
+ObjectType=0x7
+DataType=0x0006
+AccessType=rw
+DefaultValue=0
+PDOMapping=1
+
+[6300sub11]
+ParameterName=Write Outputs 0x101 to 0x110
+ObjectType=0x7
+DataType=0x0006
+AccessType=rw
+DefaultValue=0
+PDOMapping=1
+
+[6300sub12]
+ParameterName=Write Outputs 0x111 to 0x120
+ObjectType=0x7
+DataType=0x0006
+AccessType=rw
+DefaultValue=0
+PDOMapping=1
+
+[6300sub13]
+ParameterName=Write Outputs 0x121 to 0x130
+ObjectType=0x7
+DataType=0x0006
+AccessType=rw
+DefaultValue=0
+PDOMapping=1
+
+[6300sub14]
+ParameterName=Write Outputs 0x131 to 0x140
+ObjectType=0x7
+DataType=0x0006
+AccessType=rw
+DefaultValue=0
+PDOMapping=1
+
+[6300sub15]
+ParameterName=Write Outputs 0x141 to 0x150
+ObjectType=0x7
+DataType=0x0006
+AccessType=rw
+DefaultValue=0
+PDOMapping=1
+
+[6300sub16]
+ParameterName=Write Outputs 0x151 to 0x160
+ObjectType=0x7
+DataType=0x0006
+AccessType=rw
+DefaultValue=0
+PDOMapping=1
+
+[6300sub17]
+ParameterName=Write Outputs 0x161 to 0x170
+ObjectType=0x7
+DataType=0x0006
+AccessType=rw
+DefaultValue=0
+PDOMapping=1
+
+[6300sub18]
+ParameterName=Write Outputs 0x171 to 0x180
+ObjectType=0x7
+DataType=0x0006
+AccessType=rw
+DefaultValue=0
+PDOMapping=1
+
+[6300sub19]
+ParameterName=Write Outputs 0x181 to 0x190
+ObjectType=0x7
+DataType=0x0006
+AccessType=rw
+DefaultValue=0
+PDOMapping=1
+
+[6300sub1A]
+ParameterName=Write Outputs 0x191 to 0x1A0
+ObjectType=0x7
+DataType=0x0006
+AccessType=rw
+DefaultValue=0
+PDOMapping=1
+
+[6300sub1B]
+ParameterName=Write Outputs 0x1A1 to 0x1B0
+ObjectType=0x7
+DataType=0x0006
+AccessType=rw
+DefaultValue=0
+PDOMapping=1
+
+[6300sub1C]
+ParameterName=Write Outputs 0x1B1 to 0x1C0
+ObjectType=0x7
+DataType=0x0006
+AccessType=rw
+DefaultValue=0
+PDOMapping=1
+
+[6300sub1D]
+ParameterName=Write Outputs 0x1C1 to 0x1D0
+ObjectType=0x7
+DataType=0x0006
+AccessType=rw
+DefaultValue=0
+PDOMapping=1
+
+[6300sub1E]
+ParameterName=Write Outputs 0x1D1 to 0x1E0
+ObjectType=0x7
+DataType=0x0006
+AccessType=rw
+DefaultValue=0
+PDOMapping=1
+
+[6300sub1F]
+ParameterName=Write Outputs 0x1E1 to 0x1F0
+ObjectType=0x7
+DataType=0x0006
+AccessType=rw
+DefaultValue=0
+PDOMapping=1
+
+[6300sub20]
+ParameterName=Write Outputs 0x1F1 to 0x200
+ObjectType=0x7
+DataType=0x0006
 AccessType=rw
 DefaultValue=0
 PDOMapping=1

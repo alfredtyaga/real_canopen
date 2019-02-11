@@ -10,27 +10,6 @@ UNS8 Read_Inputs_8_Bit[] =		/* Mapped at index 0x6000, subindex 0x01 - 0x01 */
   {
     0x0	/* 0 */
   };
-UNS8 Polarity_Input_8_Bit[] =		/* Mapped at index 0x6002, subindex 0x01 - 0x01 */
-  {
-    0x0	/* 0 */
-  };
-UNS8 Filter_Constant_Input_8_Bit[] =		/* Mapped at index 0x6003, subindex 0x01 - 0x01 */
-  {
-    0x0	/* 0 */
-  };
-UNS8 Global_Interrupt_Enable_Digital = 0x1;		/* Mapped at index 0x6005, subindex 0x00 */
-UNS8 Interrupt_Mask_Any_Change_8_Bit[] =		/* Mapped at index 0x6006, subindex 0x01 - 0x01 */
-  {
-    0xFF	/* 255 */
-  };
-UNS8 Interrupt_Mask_Low_to_High_8_Bit[] =		/* Mapped at index 0x6007, subindex 0x01 - 0x01 */
-  {
-    0x0	/* 0 */
-  };
-UNS8 Interrupt_Mask_High_to_Low_8_Bit[] =		/* Mapped at index 0x6008, subindex 0x01 - 0x01 */
-  {
-    0x0	/* 0 */
-  };
 UNS8 Write_Outputs_8_Bit[] =		/* Mapped at index 0x6200, subindex 0x01 - 0x01 */
   {
     0x0	/* 0 */
@@ -45,6 +24,41 @@ UNS8 Error_Mode_Outputs_8_Bit[] =		/* Mapped at index 0x6206, subindex 0x01 - 0x
   };
 UNS8 Error_Value_Outputs_8_Bit[] =		/* Mapped at index 0x6207, subindex 0x01 - 0x01 */
   {
+    0x0	/* 0 */
+  };
+UNS16 Write_Outputs_16_Bit[] =		/* Mapped at index 0x6300, subindex 0x01 - 0x20 */
+  {
+    0x0,	/* 0 */
+    0x0,	/* 0 */
+    0x0,	/* 0 */
+    0x0,	/* 0 */
+    0x0,	/* 0 */
+    0x0,	/* 0 */
+    0x0,	/* 0 */
+    0x0,	/* 0 */
+    0x0,	/* 0 */
+    0x0,	/* 0 */
+    0x0,	/* 0 */
+    0x0,	/* 0 */
+    0x0,	/* 0 */
+    0x0,	/* 0 */
+    0x0,	/* 0 */
+    0x0,	/* 0 */
+    0x0,	/* 0 */
+    0x0,	/* 0 */
+    0x0,	/* 0 */
+    0x0,	/* 0 */
+    0x0,	/* 0 */
+    0x0,	/* 0 */
+    0x0,	/* 0 */
+    0x0,	/* 0 */
+    0x0,	/* 0 */
+    0x0,	/* 0 */
+    0x0,	/* 0 */
+    0x0,	/* 0 */
+    0x0,	/* 0 */
+    0x0,	/* 0 */
+    0x0,	/* 0 */
     0x0	/* 0 */
   };
 
@@ -128,14 +142,14 @@ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
                      };
 
 /* index 0x1009 :   Manufacturer Hardware Version. */
-                    UNS8 ObjDict_obj1009[10] = "VERH";
+                    UNS8 ObjDict_obj1009[10] = "0.0.1";
                     subindex ObjDict_Index1009[] = 
                      {
                        { RO, visible_string, 10, (void*)&ObjDict_obj1009, NULL }
                      };
 
 /* index 0x100A :   Manufacturer Software Version. */
-                    UNS8 ObjDict_obj100A[10] = "VERS";
+                    UNS8 ObjDict_obj100A[10] = "0.0.1";
                     subindex ObjDict_Index100A[] = 
                      {
                        { RO, visible_string, 10, (void*)&ObjDict_obj100A, NULL }
@@ -295,52 +309,6 @@ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
                        { RO, uint8, sizeof (UNS8), (void*)&Read_Inputs_8_Bit[0], NULL }
                      };
 
-/* index 0x6002 :   Mapped variable Polarity Input 8 Bit */
-                    UNS8 ObjDict_highestSubIndex_obj6002 = 1; /* number of subindex - 1*/
-                    subindex ObjDict_Index6002[] = 
-                     {
-                       { RO, uint8, sizeof (UNS8), (void*)&ObjDict_highestSubIndex_obj6002, NULL },
-                       { RW, uint8, sizeof (UNS8), (void*)&Polarity_Input_8_Bit[0], NULL }
-                     };
-
-/* index 0x6003 :   Mapped variable Filter Constant Input 8 Bit */
-                    UNS8 ObjDict_highestSubIndex_obj6003 = 1; /* number of subindex - 1*/
-                    subindex ObjDict_Index6003[] = 
-                     {
-                       { RO, uint8, sizeof (UNS8), (void*)&ObjDict_highestSubIndex_obj6003, NULL },
-                       { RW, uint8, sizeof (UNS8), (void*)&Filter_Constant_Input_8_Bit[0], NULL }
-                     };
-
-/* index 0x6005 :   Mapped variable Global Interrupt Enable Digital */
-                    subindex ObjDict_Index6005[] = 
-                     {
-                       { RW, boolean, sizeof (UNS8), (void*)&Global_Interrupt_Enable_Digital, NULL }
-                     };
-
-/* index 0x6006 :   Mapped variable Interrupt Mask Any Change 8 Bit */
-                    UNS8 ObjDict_highestSubIndex_obj6006 = 1; /* number of subindex - 1*/
-                    subindex ObjDict_Index6006[] = 
-                     {
-                       { RO, uint8, sizeof (UNS8), (void*)&ObjDict_highestSubIndex_obj6006, NULL },
-                       { RW, uint8, sizeof (UNS8), (void*)&Interrupt_Mask_Any_Change_8_Bit[0], NULL }
-                     };
-
-/* index 0x6007 :   Mapped variable Interrupt Mask Low to High 8 Bit */
-                    UNS8 ObjDict_highestSubIndex_obj6007 = 1; /* number of subindex - 1*/
-                    subindex ObjDict_Index6007[] = 
-                     {
-                       { RO, uint8, sizeof (UNS8), (void*)&ObjDict_highestSubIndex_obj6007, NULL },
-                       { RW, uint8, sizeof (UNS8), (void*)&Interrupt_Mask_Low_to_High_8_Bit[0], NULL }
-                     };
-
-/* index 0x6008 :   Mapped variable Interrupt Mask High to Low 8 Bit */
-                    UNS8 ObjDict_highestSubIndex_obj6008 = 1; /* number of subindex - 1*/
-                    subindex ObjDict_Index6008[] = 
-                     {
-                       { RO, uint8, sizeof (UNS8), (void*)&ObjDict_highestSubIndex_obj6008, NULL },
-                       { RW, uint8, sizeof (UNS8), (void*)&Interrupt_Mask_High_to_Low_8_Bit[0], NULL }
-                     };
-
 /* index 0x6200 :   Mapped variable Write Outputs 8 Bit */
                     UNS8 ObjDict_highestSubIndex_obj6200 = 1; /* number of subindex - 1*/
                     subindex ObjDict_Index6200[] = 
@@ -373,6 +341,45 @@ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
                        { RW, uint8, sizeof (UNS8), (void*)&Error_Value_Outputs_8_Bit[0], NULL }
                      };
 
+/* index 0x6300 :   Mapped variable Write Outputs 16 Bit */
+                    UNS8 ObjDict_highestSubIndex_obj6300 = 32; /* number of subindex - 1*/
+                    subindex ObjDict_Index6300[] = 
+                     {
+                       { RO, uint8, sizeof (UNS8), (void*)&ObjDict_highestSubIndex_obj6300, NULL },
+                       { RW, uint16, sizeof (UNS16), (void*)&Write_Outputs_16_Bit[0], NULL },
+                       { RW, uint16, sizeof (UNS16), (void*)&Write_Outputs_16_Bit[1], NULL },
+                       { RW, uint16, sizeof (UNS16), (void*)&Write_Outputs_16_Bit[2], NULL },
+                       { RW, uint16, sizeof (UNS16), (void*)&Write_Outputs_16_Bit[3], NULL },
+                       { RW, uint16, sizeof (UNS16), (void*)&Write_Outputs_16_Bit[4], NULL },
+                       { RW, uint16, sizeof (UNS16), (void*)&Write_Outputs_16_Bit[5], NULL },
+                       { RW, uint16, sizeof (UNS16), (void*)&Write_Outputs_16_Bit[6], NULL },
+                       { RW, uint16, sizeof (UNS16), (void*)&Write_Outputs_16_Bit[7], NULL },
+                       { RW, uint16, sizeof (UNS16), (void*)&Write_Outputs_16_Bit[8], NULL },
+                       { RW, uint16, sizeof (UNS16), (void*)&Write_Outputs_16_Bit[9], NULL },
+                       { RW, uint16, sizeof (UNS16), (void*)&Write_Outputs_16_Bit[10], NULL },
+                       { RW, uint16, sizeof (UNS16), (void*)&Write_Outputs_16_Bit[11], NULL },
+                       { RW, uint16, sizeof (UNS16), (void*)&Write_Outputs_16_Bit[12], NULL },
+                       { RW, uint16, sizeof (UNS16), (void*)&Write_Outputs_16_Bit[13], NULL },
+                       { RW, uint16, sizeof (UNS16), (void*)&Write_Outputs_16_Bit[14], NULL },
+                       { RW, uint16, sizeof (UNS16), (void*)&Write_Outputs_16_Bit[15], NULL },
+                       { RW, uint16, sizeof (UNS16), (void*)&Write_Outputs_16_Bit[16], NULL },
+                       { RW, uint16, sizeof (UNS16), (void*)&Write_Outputs_16_Bit[17], NULL },
+                       { RW, uint16, sizeof (UNS16), (void*)&Write_Outputs_16_Bit[18], NULL },
+                       { RW, uint16, sizeof (UNS16), (void*)&Write_Outputs_16_Bit[19], NULL },
+                       { RW, uint16, sizeof (UNS16), (void*)&Write_Outputs_16_Bit[20], NULL },
+                       { RW, uint16, sizeof (UNS16), (void*)&Write_Outputs_16_Bit[21], NULL },
+                       { RW, uint16, sizeof (UNS16), (void*)&Write_Outputs_16_Bit[22], NULL },
+                       { RW, uint16, sizeof (UNS16), (void*)&Write_Outputs_16_Bit[23], NULL },
+                       { RW, uint16, sizeof (UNS16), (void*)&Write_Outputs_16_Bit[24], NULL },
+                       { RW, uint16, sizeof (UNS16), (void*)&Write_Outputs_16_Bit[25], NULL },
+                       { RW, uint16, sizeof (UNS16), (void*)&Write_Outputs_16_Bit[26], NULL },
+                       { RW, uint16, sizeof (UNS16), (void*)&Write_Outputs_16_Bit[27], NULL },
+                       { RW, uint16, sizeof (UNS16), (void*)&Write_Outputs_16_Bit[28], NULL },
+                       { RW, uint16, sizeof (UNS16), (void*)&Write_Outputs_16_Bit[29], NULL },
+                       { RW, uint16, sizeof (UNS16), (void*)&Write_Outputs_16_Bit[30], NULL },
+                       { RW, uint16, sizeof (UNS16), (void*)&Write_Outputs_16_Bit[31], NULL }
+                     };
+
 /**************************************************************************/
 /* Declaration of pointed variables                                       */
 /**************************************************************************/
@@ -398,20 +405,16 @@ const indextable ObjDict_objdict[] =
   { (subindex*)ObjDict_Index1800,sizeof(ObjDict_Index1800)/sizeof(ObjDict_Index1800[0]), 0x1800},
   { (subindex*)ObjDict_Index1A00,sizeof(ObjDict_Index1A00)/sizeof(ObjDict_Index1A00[0]), 0x1A00},
   { (subindex*)ObjDict_Index6000,sizeof(ObjDict_Index6000)/sizeof(ObjDict_Index6000[0]), 0x6000},
-  { (subindex*)ObjDict_Index6002,sizeof(ObjDict_Index6002)/sizeof(ObjDict_Index6002[0]), 0x6002},
-  { (subindex*)ObjDict_Index6003,sizeof(ObjDict_Index6003)/sizeof(ObjDict_Index6003[0]), 0x6003},
-  { (subindex*)ObjDict_Index6005,sizeof(ObjDict_Index6005)/sizeof(ObjDict_Index6005[0]), 0x6005},
-  { (subindex*)ObjDict_Index6006,sizeof(ObjDict_Index6006)/sizeof(ObjDict_Index6006[0]), 0x6006},
-  { (subindex*)ObjDict_Index6007,sizeof(ObjDict_Index6007)/sizeof(ObjDict_Index6007[0]), 0x6007},
-  { (subindex*)ObjDict_Index6008,sizeof(ObjDict_Index6008)/sizeof(ObjDict_Index6008[0]), 0x6008},
   { (subindex*)ObjDict_Index6200,sizeof(ObjDict_Index6200)/sizeof(ObjDict_Index6200[0]), 0x6200},
   { (subindex*)ObjDict_Index6202,sizeof(ObjDict_Index6202)/sizeof(ObjDict_Index6202[0]), 0x6202},
   { (subindex*)ObjDict_Index6206,sizeof(ObjDict_Index6206)/sizeof(ObjDict_Index6206[0]), 0x6206},
   { (subindex*)ObjDict_Index6207,sizeof(ObjDict_Index6207)/sizeof(ObjDict_Index6207[0]), 0x6207},
+  { (subindex*)ObjDict_Index6300,sizeof(ObjDict_Index6300)/sizeof(ObjDict_Index6300[0]), 0x6300},
 };
 
 const indextable * ObjDict_scanIndexOD (CO_Data *d, UNS16 wIndex, UNS32 * errorCode)
 {
+	(void)d;
 	int i;
 	switch(wIndex){
 		case 0x1000: i = 0;break;
@@ -433,16 +436,11 @@ const indextable * ObjDict_scanIndexOD (CO_Data *d, UNS16 wIndex, UNS32 * errorC
 		case 0x1800: i = 16;break;
 		case 0x1A00: i = 17;break;
 		case 0x6000: i = 18;break;
-		case 0x6002: i = 19;break;
-		case 0x6003: i = 20;break;
-		case 0x6005: i = 21;break;
-		case 0x6006: i = 22;break;
-		case 0x6007: i = 23;break;
-		case 0x6008: i = 24;break;
-		case 0x6200: i = 25;break;
-		case 0x6202: i = 26;break;
-		case 0x6206: i = 27;break;
-		case 0x6207: i = 28;break;
+		case 0x6200: i = 19;break;
+		case 0x6202: i = 20;break;
+		case 0x6206: i = 21;break;
+		case 0x6207: i = 22;break;
+		case 0x6300: i = 23;break;
 		default:
 			*errorCode = OD_NO_SUCH_OBJECT;
 			return NULL;
