@@ -54,7 +54,7 @@ OBJECTS = 	$(DRV)/can_AVR.o\
 		$(SRC)/sdo.o\
 		$(SRC)/states.o\
 		$(SRC)/sync.o\
-		ObjDict.o\
+		real-objdict.o\
 		uart.o\
 		main.o
 

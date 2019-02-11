@@ -34,7 +34,7 @@ Short description:
 #include "hardware.h"
 #include "canfestival.h"
 #include "can_AVR.h"
-#include "ObjDict.h"
+#include "real-objdict.h"
 #include "uart.h"
 #include <stdio.h>
 #include <util/delay.h>
