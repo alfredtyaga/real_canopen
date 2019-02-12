@@ -1,25 +1,8 @@
-/*
-This file is part of CanFestival, a library implementing CanOpen Stack.
+// vi: sw=2 ts=2 sts=2
+//
+// TODO:
+//   * watchdog timer and associated beckhoff functionality
 
-Copyright (C): Edouard TISSERANT and Francis DUPIN
-AVR Port: Andreas GLAUSER and Peter CHRISTEN
-
-See COPYING file for copyrights details.
-
-This library is free software; you can redistribute it and/or
-modify it under the terms of the GNU Lesser General Public
-License as published by the Free Software Foundation; either
-version 2.1 of the License, or (at your option) any later version.
-
-This library is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-Lesser General Public License for more details.
-
-You should have received a copy of the GNU Lesser General Public
-License along with this library; if not, write to the Free Software
-Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-*/
 /******************************************************************************
 Project description:
 Test project for a SparkFun AST-CAN485 using the AT90CAN128 microcontroller
@@ -27,6 +10,7 @@ Test project for a SparkFun AST-CAN485 using the AT90CAN128 microcontroller
 Short description:
   PORTA:        Inputs (Keys, low active)
   PORTB:        Outputs (CAN_STBY on PB4)
+  PORTD:        Used for I2C (PD0, PD1)
   PORTE:        8 outputs: RXI, TXO, D4, D5, D6, D7, D8, D9
   PORTF:        4 inputs; lower bits map to A0, A1, A2, A3 on the AST-CAN485
 ******************************************************************************/
@@ -36,6 +20,7 @@ Short description:
 #include "can_AVR.h"
 #include "real_objdict.h"
 #include "uart.h"
+#include "pwm.h"
 #include <stdio.h>
 #include <util/delay.h>
 
@@ -47,14 +32,18 @@ unsigned char nodeID;
 unsigned char digital_input[1] = {0};
 unsigned char digital_output[1] = {0};
 
-UNS16 pwm_on_time[32] = {
+#ifdef DEBUG_MESSAGES
+#undef DEBUG_MESSAGES
+#endif
+
+UNS16 pwm_on_time[REAL_PWM_NUM] = {
     0, 0, 0, 0, 0, 0, 0, 0,
     0, 0, 0, 0, 0, 0, 0, 0,
     0, 0, 0, 0, 0, 0, 0, 0,
     0, 0, 0, 0, 0, 0, 0, 0,
 };
 
-UNS16 pwm_off_time[32] = {
+UNS16 pwm_off_time[REAL_PWM_NUM] = {
     0, 0, 0, 0, 0, 0, 0, 0,
     0, 0, 0, 0, 0, 0, 0, 0,
     0, 0, 0, 0, 0, 0, 0, 0,
@@ -107,8 +96,7 @@ unsigned char digital_input_handler(CO_Data* d, unsigned char *newInput, unsigne
 }
 
 unsigned char digital_output_handler(CO_Data* d, unsigned char *newOutput, unsigned char size)
-{
-  unsigned char loops, i, error, type;
+{ unsigned char loops, i, error, type;
   UNS32 varsize = 1;
 
   loops = (sizeof(Write_Outputs_8_Bit) <= size) ? sizeof(Write_Outputs_8_Bit) : size;
@@ -137,7 +125,7 @@ unsigned char analog_output_handler(CO_Data* d, unsigned int *newOutput, unsigne
   return 0;
 }
 
-unsigned char pwm_output_handler(CO_Data* d, UNS16 *on_time, UNS16 *off_time, unsigned char count)
+unsigned char pwm_output_handler(CO_Data* d, UNS16 *on_time, UNS16 *off_time)
 {
   unsigned char i, error, type;
   UNS32 varsize = 1;
@@ -147,9 +135,19 @@ unsigned char pwm_output_handler(CO_Data* d, UNS16 *on_time, UNS16 *off_time, un
   // Get the error status
   getODentry(d, 0x1001, 0x0, &error, &varsize, &type, RO);
 
-  outputs_disabled = (getState(d) == Stopped || !error);
+  outputs_disabled = (getState(d) == Stopped) || (error != 0);
 
-  for (i=0; i < count; i++)
+  if (outputs_disabled) {
+    printf("disabled: %d ", outputs_disabled);
+    if (getState(d) == Stopped) {
+      printf("state=stopped\n");
+    }
+    if (error != 0) {
+      printf("error %d\n", error);
+    }
+  }
+
+  for (i=0; i < REAL_PWM_NUM; i++)
   {
     if (outputs_disabled)
     {
@@ -163,6 +161,15 @@ unsigned char pwm_output_handler(CO_Data* d, UNS16 *on_time, UNS16 *off_time, un
     if ((new_on != *on_time) || (new_off != *off_time)) {
         *on_time = new_on;
         *off_time = new_off;
+/* #if DEBUG_MESSAGES */
+        printf("PWM %d %d %d\n", i, new_on, new_off);
+/* #endif */
+        // TODO addresses
+        if (i < 16) {
+            set_pwm_output(0x40, i, new_on, new_off);
+        } else {
+            // set_pwm_output(0x41, i - 16, new_on, new_off);
+        }
     }
 
     on_time++;
@@ -193,6 +200,14 @@ int main(void)
 {
   sys_init();                            // Initialize system
   uart_init();
+  pwm_init();
+
+  set_pwm_frequency(0x40, 1000.0f);
+
+  for (int i=0; i < 16; i++) {
+    set_pwm_output(0x40, i, i * 100, 2000);
+  }
+
   stdout = &uart_output;
   stdin  = &uart_input;
 
@@ -209,20 +224,11 @@ int main(void)
     if (sys_timer)                       // Cycle timer, invoke action on every time slice
     {
       reset_sys_timer();                 // Reset timer
-      digital_input[0] = read_inputs();
-      digital_input_handler(&ObjDict_Data, digital_input, sizeof(digital_input));
-      digital_output_handler(&ObjDict_Data, digital_output, sizeof(digital_output));
-      write_outputs(digital_output[0]);
-
-      // Can support changing the CAN address of this device through digital
-      // inputs:
-      /*if(!( nodeID == read_bcd()))
-      {
-        nodeID = read_bcd();                      // Save the new CAN address
-        setState(&ObjDict_Data, Stopped);         // Stop the node, to change the node ID
-        setNodeId(&ObjDict_Data, nodeID);         // Now the CAN address is changed
-        setState(&ObjDict_Data, Pre_operational); // Set to Pre_operational, master must boot it again
-      }*/
+      // digital_input[0] = read_inputs();
+      // digital_input_handler(&ObjDict_Data, digital_input, sizeof(digital_input));
+      // digital_output_handler(&ObjDict_Data, digital_output, sizeof(digital_output));
+      pwm_output_handler(&ObjDict_Data, (UNS16*)&pwm_on_time, (UNS16*)&pwm_off_time);
+      // write_outputs(digital_output[0]);
     }
 
     // a message was received pass it to the CANstack
@@ -264,8 +270,9 @@ OUTPUT  void
   PORTC = 0xFF;             // 1 BCD switch with pullup
   DDRC  = 0x00;             //
 
-  PORTD = 0x2C;             // 2xCOM, unused, CAN, unused
-  DDRD  = 0x2A;             // - All init 0 or without pullup
+  // PORTD0 / SCL
+  // PORTD1 / SDA
+  // initialized in pwm_init
 
   PORTE = 0x00;             // Output
   DDRE  = 0xFF;             // - 2x not used, 2x not used

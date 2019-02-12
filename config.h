@@ -20,6 +20,14 @@
 #ifndef F_CPU
 #define F_CPU          (1000UL*FOSC) // Need for AVR GCC
 #endif
+
+// I2C frequency
+#ifndef TWI_FREQ
+#define TWI_FREQ 100000L
+#endif
+
+#define REAL_PWM_NUM 32
+
 #define CAN_BAUDRATE    500
 
 // Needed defines by Canfestival lib
