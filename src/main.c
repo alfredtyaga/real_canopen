@@ -2,17 +2,15 @@
 //
 // TODO:
 //   * watchdog timer and associated beckhoff functionality
+//   * output enable setting
 
 /******************************************************************************
 Project description:
-Test project for a SparkFun AST-CAN485 using the AT90CAN128 microcontroller
+LCLS-II Resistive Element Adjustable Length (REAL) heater controller / PWM CANopen slave
 
 Short description:
-  PORTA:        Inputs (Keys, low active)
   PORTB:        Outputs (CAN_STBY on PB4)
   PORTD:        Used for I2C (PD0, PD1)
-  PORTE:        8 outputs: RXI, TXO, D4, D5, D6, D7, D8, D9
-  PORTF:        4 inputs; lower bits map to A0, A1, A2, A3 on the AST-CAN485
 ******************************************************************************/
 
 #include "hardware.h"
@@ -29,8 +27,6 @@ unsigned char timer_interrupt = 0;              // Set if timer interrupt eclaps
 unsigned char inputs;
 
 unsigned char nodeID;
-unsigned char digital_input[1] = {0};
-unsigned char digital_output[1] = {0};
 
 #ifdef DEBUG_MESSAGES
 #undef DEBUG_MESSAGES
@@ -60,70 +56,6 @@ void sys_init();
 #define DEFAULT_NODE_ID          1
 #define DEBUG_MESSAGES           0
 
-unsigned char digital_input_handler(CO_Data* d, unsigned char *newInput, unsigned char size)
-{
-  /*
-  unsigned char loops, i, input, transmission = 0;
-
-  loops = (sizeof(Read_Inputs_8_Bit) <= size) ? sizeof(Read_Inputs_8_Bit) : size;
-
-  for (i=0; i < loops; i++)
-  {
-    input = *newInput ^ Polarity_Input_8_Bit[i];
-    if (Read_Inputs_8_Bit[i] != input)
-    {
-      if (Global_Interrupt_Enable_Digital)
-      {
-        if ((Interrupt_Mask_Any_Change_8_Bit[i] & (Read_Inputs_8_Bit[i] ^ input))
-         || (Interrupt_Mask_Low_to_High_8_Bit[i] & ~Read_Inputs_8_Bit[i] & input)
-         || (Interrupt_Mask_High_to_Low_8_Bit[i] & Read_Inputs_8_Bit[i] & ~input))
-           transmission = 1;
-      }
-      // update the object dictionary here:
-      Read_Inputs_8_Bit[i] = input;
-    }
-    newInput++;
-  }
-
-  if (transmission)
-  {
-    // force emission of PDO by artificially changing last emitted
-    d->PDO_status[0].last_message.cob_id = 0;
-    sendPDOevent(d);
-  }
-  */
-  return 1;
-}
-
-unsigned char digital_output_handler(CO_Data* d, unsigned char *newOutput, unsigned char size)
-{ unsigned char loops, i, error, type;
-  UNS32 varsize = 1;
-
-  loops = (sizeof(Write_Outputs_8_Bit) <= size) ? sizeof(Write_Outputs_8_Bit) : size;
-
-  for (i=0; i < loops; i++)
-  {
-    getODentry(d, 0x1001, 0x0, &error, &varsize, &type, RO);
-    if ((getState(d) == Stopped) || (error != 0))       // node stopped or error
-    {
-      Write_Outputs_8_Bit[i] &= (~Error_Mode_Outputs_8_Bit[i] | Error_Value_Outputs_8_Bit[i]);
-      Write_Outputs_8_Bit[i] |= (Error_Mode_Outputs_8_Bit[i] & Error_Value_Outputs_8_Bit[i]);
-    }
-    *newOutput = Write_Outputs_8_Bit[i] ^ Change_Polarity_Outputs_8_Bit[i];
-    newOutput++;
-  }
-  return 1;
-}
-
-unsigned char analog_input_handler(CO_Data* d, unsigned int *newInput, unsigned char size)
-{
-  return 0;
-}
-
-unsigned char analog_output_handler(CO_Data* d, unsigned int *newOutput, unsigned char size)
-{
-  return 0;
-}
 
 unsigned char pwm_output_handler(CO_Data* d, UNS16 *on_time, UNS16 *off_time)
 {
@@ -151,25 +83,26 @@ unsigned char pwm_output_handler(CO_Data* d, UNS16 *on_time, UNS16 *off_time)
   {
     if (outputs_disabled)
     {
-        new_on = 0;
-        new_off = 0;
+      // TODO: do this by the output enable bit
+      new_on = 0;
+      new_off = 0;
     } else {
-        new_on = 0;
-        new_off = (Write_Outputs_16_Bit[i] & 0x0FFF);
+      new_on = 0;
+      new_off = (Write_Outputs_16_Bit[i] & 0x0FFF);
     }
 
     if ((new_on != *on_time) || (new_off != *off_time)) {
-        *on_time = new_on;
-        *off_time = new_off;
+      *on_time = new_on;
+      *off_time = new_off;
 /* #if DEBUG_MESSAGES */
-        printf("PWM %d %d %d\n", i, new_on, new_off);
+      printf("PWM %d %d %d\n", i, new_on, new_off);
 /* #endif */
-        // TODO addresses
-        if (i < 16) {
-            set_pwm_output(0x40, i, new_on, new_off);
-        } else {
-            // set_pwm_output(0x41, i - 16, new_on, new_off);
-        }
+      // TODO addresses
+      if (i < 16) {
+          set_pwm_output(0x40, i, new_on, new_off);
+      } else {
+          // set_pwm_output(0x41, i - 16, new_on, new_off);
+      }
     }
 
     on_time++;
@@ -184,7 +117,7 @@ unsigned char read_inputs()
   unsigned char reading = (PINF & 0x0F);
 #if DEBUG_MESSAGES
   if (reading != 0) {
-	printf("PINF=%x\n", reading);
+    printf("PINF=%x\n", reading);
   }
 #endif
   return reading;
@@ -196,9 +129,17 @@ void write_outputs(unsigned char value)
   PORTE = value;
 }
 
+// tick: called every cycle (1ms)
+inline int tick()
+{
+  pwm_output_handler(&ObjDict_Data, (UNS16*)&pwm_on_time, (UNS16*)&pwm_off_time);
+  return 1;
+}
+
+
 int main(void)
 {
-  sys_init();                            // Initialize system
+  sys_init();
   uart_init();
   pwm_init();
 
@@ -211,43 +152,38 @@ int main(void)
   stdout = &uart_output;
   stdin  = &uart_input;
 
-  canInit(CAN_BAUDRATE);                 // Initialize the CANopen bus
-  initTimer();                           // Start timer for the CANopen stack
+  canInit(CAN_BAUDRATE);
+
+  // Start timer for the CANopen stack
+  initTimer();
+
   nodeID = DEFAULT_NODE_ID;
+
   setNodeId(&ObjDict_Data, nodeID);
-  setState(&ObjDict_Data, Initialisation);  // Init the state
+  setState(&ObjDict_Data, Initialisation);
 
   printf("Online with node ID: %d\n", nodeID);
 
-  for(;;)                                // forever loop
+  for(;;)
   {
-    if (sys_timer)                       // Cycle timer, invoke action on every time slice
+    if (sys_timer)
     {
-      reset_sys_timer();                 // Reset timer
-      // digital_input[0] = read_inputs();
-      // digital_input_handler(&ObjDict_Data, digital_input, sizeof(digital_input));
-      // digital_output_handler(&ObjDict_Data, digital_output, sizeof(digital_output));
-      pwm_output_handler(&ObjDict_Data, (UNS16*)&pwm_on_time, (UNS16*)&pwm_off_time);
-      // write_outputs(digital_output[0]);
+      // Cycle timer, invoke action on every time slice
+      reset_sys_timer();
+      tick();
     }
 
-    // a message was received pass it to the CANstack
-    if (canReceive(&m)) {               // a message received
-#if DEBUG_MESSAGES
-      printf("<-%d/%d/", m.cob_id, m.rtr);
-      for (int i=0; i< m.len; i++){
-          printf("%d ", m.data[i]);
-      }
-      printf("\n");
-#endif
-      canDispatch(&ObjDict_Data, &m);         // process it
+    if (canReceive(&m))
+    {
+      // message was received -> pass it to the CANstack
+      canDispatch(&ObjDict_Data, &m);
     } else {
       // Enter sleep mode
-#ifdef WD_SLEEP           // Watchdog and Sleep
+#ifdef WD_SLEEP
       wdt_reset();
       sleep_enable();
       sleep_cpu();
-#endif                            // Watchdog and Sleep
+#endif
     }
   }
 }
@@ -284,14 +220,20 @@ OUTPUT  void
   DDRG  = 0x1F;             // - Output for debug (only 5 pins)
 
   // Set timer 0 for main schedule time
-  TCCR0A |= 1 << WGM01 | 1 << CS01 | 1 << CS00;// Timer 0 CTC , Timer 0 mit CK/64 starten
-  TIMSK0 = 1 << OCIE0A;                 // Timer Interrupts: Timer 0 Compare
-  OCR0A = (unsigned char)(F_CPU / 64 * CYCLE_TIME/1000000 - 1); // Reloadvalue for timer 0
-#ifdef WD_SLEEP             // Watchdog and Sleep
+  // Timer 0 CTC , Timer 0 with CK/64 start
+  TCCR0A |= 1 << WGM01 | 1 << CS01 | 1 << CS00;
+  // Timer Interrupts: Timer 0 Compare
+  TIMSK0 = 1 << OCIE0A;
+  // Reload value for timer 0
+  OCR0A = (unsigned char)(F_CPU / 64 * CYCLE_TIME/1000000 - 1);
+
+#ifdef WD_SLEEP
   wdt_reset();
   wdt_enable(WDTO_15MS);    // Watchdogtimer start with 16 ms timeout
-#endif                      // Watchdog and Sleep
-  sei();                    // Enable Interrupts
+#endif
+
+  // Enable Interrupts
+  sei();
 }
 
 
