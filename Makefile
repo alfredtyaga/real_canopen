@@ -7,7 +7,8 @@ PROJECT = real_canopen
 MCU = at90can128
 TARGET = AVR
 CC = avr-gcc
-SRC = canfestival/src
+SRC = src
+CAN_SRC = canfestival/src
 DRV = canfestival/drivers/AVR
 ARDUINO_ROOT = C:/arduino
 COM_PORT = com6
@@ -37,28 +38,28 @@ HEX_EEPROM_FLAGS += --set-section-flags=.eeprom="alloc,load"
 HEX_EEPROM_FLAGS += --change-section-lma .eeprom=0 --no-change-warnings
 
 ## Include Directories
-INCLUDES = -I"canfestival/include" -I"canfestival/include/AVR" -I"."
+INCLUDES = -I"canfestival/include" -I"canfestival/include/AVR" -I"src"
 
 ## Objects that must be built in order to link
 OBJECTS = 	$(DRV)/can_AVR.o\
 		$(DRV)/timer_AVR.o\
-		$(SRC)/dcf.o\
-		$(SRC)/timer.o\
-		$(SRC)/emcy.o\
-		$(SRC)/lifegrd.o\
-		$(SRC)/lss.o\
-		$(SRC)/nmtMaster.o\
-		$(SRC)/nmtSlave.o\
-		$(SRC)/objacces.o\
-		$(SRC)/pdo.o\
-		$(SRC)/sdo.o\
-		$(SRC)/states.o\
-		$(SRC)/sync.o\
-		real_objdict.o\
-		uart.o\
-		twi.o\
-		pwm.o\
-		main.o
+		$(CAN_SRC)/dcf.o\
+		$(CAN_SRC)/timer.o\
+		$(CAN_SRC)/emcy.o\
+		$(CAN_SRC)/lifegrd.o\
+		$(CAN_SRC)/lss.o\
+		$(CAN_SRC)/nmtMaster.o\
+		$(CAN_SRC)/nmtSlave.o\
+		$(CAN_SRC)/objacces.o\
+		$(CAN_SRC)/pdo.o\
+		$(CAN_SRC)/sdo.o\
+		$(CAN_SRC)/states.o\
+		$(CAN_SRC)/sync.o\
+		$(SRC)/real_objdict.o\
+		$(SRC)/uart.o\
+		$(SRC)/twi.o\
+		$(SRC)/pwm.o\
+		$(SRC)/main.o
 
 ## Build
 all: $(PROJECT).elf $(PROJECT).hex $(PROJECT).eep $(PROJECT).lss size
@@ -69,8 +70,7 @@ all: $(PROJECT).elf $(PROJECT).hex $(PROJECT).eep $(PROJECT).lss size
 	@echo "---------------------------------------------------------------------------"
 	@echo "**Compiling $< -> $@"
 #	@echo "*********************************************"
-	$(CC) $(INCLUDES) $(CFLAGS) -c $<
-#	$(CC) $(INCLUDES) $(CFLAGS) -c -o $@ $< 
+	$(CC) $(INCLUDES) $(CFLAGS) -c -o $@ $<
 
 
 ##Link
@@ -79,7 +79,7 @@ $(PROJECT).elf: $(OBJECTS)
 	@echo "---------------------------------------------------------------------------"
 	@echo "**Linking :  $@"
 #	@echo "*********************************************"
-	$(CC) $(LDFLAGS) $(LIBDIRS) $(LIBS) $(^F) -o $@
+	$(CC) $(LDFLAGS) $(LIBDIRS) $(LIBS) $(OBJECTS) -o $@
 
 %.hex: $(PROJECT).elf
 	avr-objcopy -O ihex $(HEX_FLASH_FLAGS)  $< $@
@@ -97,7 +97,7 @@ size: $(PROJECT).elf
 ## Clean target
 .PHONY: clean
 clean:
-	-rm -rf *.o $(PROJECT).elf dep/* $(PROJECT).hex $(PROJECT).eep $(PROJECT).lss $(PROJECT).map
+	-rm -rf $(OBJECTS) $(PROJECT).elf dep/* $(PROJECT).hex $(PROJECT).eep $(PROJECT).lss $(PROJECT).map
 
 
 ## Other dependencies
