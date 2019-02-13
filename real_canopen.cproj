@@ -12,9 +12,9 @@
     <OutputFileName>$(MSBuildProjectName)</OutputFileName>
     <OutputFileExtension>.elf</OutputFileExtension>
     <OutputDirectory>$(MSBuildProjectDirectory)\$(Configuration)</OutputDirectory>
-    <AssemblyName>can485_canopen_slave</AssemblyName>
-    <Name>can485_canopen_slave</Name>
-    <RootNamespace>can485_canopen_slave</RootNamespace>
+    <AssemblyName>real_canopen</AssemblyName>
+    <Name>real_canopen</Name>
+    <RootNamespace>real_canopen</RootNamespace>
     <ToolchainFlavour>Native</ToolchainFlavour>
     <KeepTimersRunning>true</KeepTimersRunning>
     <OverrideVtor>false</OverrideVtor>
@@ -165,7 +165,7 @@
     </CleanTarget>
     <ExternalMakeFilePath>
     </ExternalMakeFilePath>
-    <OutputFileName>can485_canopen_slave</OutputFileName>
+    <OutputFileName>real_canopen</OutputFileName>
     <OutputFileExtension>.elf</OutputFileExtension>
     <OutputType>Executable</OutputType>
   </PropertyGroup>

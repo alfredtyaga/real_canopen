@@ -1,9 +1,9 @@
 ###############################################################################
-# Makefile for the project can485_canopen_slave
+# Makefile for the project real_canopen
 ###############################################################################
 
 ## General Flags
-PROJECT = can485_canopen_slave
+PROJECT = real_canopen
 MCU = at90can128
 TARGET = AVR
 CC = avr-gcc
