@@ -1,31 +1,9 @@
-AST-CAN485 CANopen Slave Example
---------------------------------
+LCLS-II REAL Heater Control
+---------------------------
 
-A simple CANopen slave example using the SparkFun AST-CAN485 board.
-
-Connections
------------
-
-4 digital inputs and 8 digital outputs are exposed through PDOs as follows:
-
-| AST-CAN485    | Port / bit    | Usage          | CANopen         |
-|:-------------:|:-------------:|:--------------:|:---------------:|
-| A0            | PF0           | Input / TxPDO  | 0x6000:01 bit 0 |
-| A1            | PF1           | Input / TxPDO  | 0x6000:01 bit 1 |
-| A2            | PF2           | Input / TxPDO  | 0x6000:01 bit 2 |
-| A3            | PF3           | Input / TxPDO  | 0x6000:01 bit 3 |
-| RXI           | PE0           | Output / RxPDO | 0x7000:01 bit 0 |
-| TXO           | PE1           | Output / RxPDO | 0x7000:01 bit 1 |
-| D4            | PE2           | Output / RxPDO | 0x7000:01 bit 2 |
-| D5            | PE3           | Output / RxPDO | 0x7000:01 bit 3 |
-| D6            | PE4           | Output / RxPDO | 0x7000:01 bit 4 |
-| D7            | PE5           | Output / RxPDO | 0x7000:01 bit 5 |
-| D8            | PE6           | Output / RxPDO | 0x7000:01 bit 6 |
-| D9            | PE7           | Output / RxPDO | 0x7000:01 bit 7 |
-
-
-Standard output (stdout) and standard error (stderr) can be used directly with
-the Arduino FTDI serial port monitor at 9600 baud.
+AT90CAN128 (AST-CAN485 board)-based project that interfaces with a Beckhoff PLC
+via CANopen, controlling 32 PWM outputs using PCA9685 16-channel 12-bit PWM
+chips.
 
 Object Dictionary
 -----------------
@@ -73,11 +51,12 @@ To get this working with conda:
 $ conda create -n canfestival python=2.7 wxpython==3
 $ cd canfestival/objdictgen
 $ source activate canfestival
-$ pythonw objdictedit.py ../../ObjDict.od
+$ pythonw objdictedit.py ../../real_objdict.od
 ```
 
 Links
 -----
+[Project template](https://github.com/klauer/can485_canopen_slave)
 [canfestival-3-asc repository](https://bitbucket.org/Mongo/canfestival-3-asc)
 [AST-CAN485 product page](https://www.sparkfun.com/products/14483)
 [AST-CAN485 schematic](https://cdn.sparkfun.com/assets/2/8/3/4/7/SparkFun_AST-CAN485.pdf)
